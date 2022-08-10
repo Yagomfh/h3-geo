@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StaticMap, MapContext } from 'react-map-gl';
-import DeckGL, { FlyToInterpolator } from 'deck.gl';
+import DeckGL, { FlyToInterpolator, LinearInterpolator } from 'deck.gl';
 import { PathLayer } from '@deck.gl/layers';
 import data from './data/source'
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
@@ -19,6 +19,7 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 
 const TOKEN = import.meta.env.VITE_MAPBOX_API_KEY || null
+const transitionInterpolator = new LinearInterpolator(['bearing']);
 
 const INITIAL_VIEW_STATE = {
   latitude: 51.47,
@@ -36,11 +37,11 @@ const App = () => {
 
   const playPath = () => {
     setDisable(true)
-    for (let i = 0; i <= 100; i++) {
+    for (let i = 0; i <= 100; i += 0.25) {
       setTimeout(() => {
         setProgress(i)
         i == 100 && setDisable(false)
-      }, i * 100)
+      }, i * 200)
     }
   }
 
@@ -62,6 +63,7 @@ const App = () => {
       ...view,
       latitude: filteredData[filteredData.length - 1][1],
       longitude: filteredData[filteredData.length - 1][0],
+      transitionDuration: 500
     })
     setLayer(l)
   }
